@@ -14,12 +14,25 @@ include 'includes/header.php';
 </head>
 <body>
     <main class="content">
-        <section class="slider-section">
-            <div class="slider">
-                
+        <section class="container">
+            <div class="slider-wrapper">
+                <div class="slider">    
+                    <img id="slide-1" src="resources/images/1banner.jpg" alt="Construction tools including hammer, wrench, and pliers arranged on a surface">
+                    <img id="slide-2" src="resources/images/2banner.jpg" alt="Plumbing pipes, fittings, and fixtures for construction">
+                </div>
+                <div class="slider-nav">
+                    <a href="#slide-1"></a>
+                    <a href="#slide-2"></a>
+                </div>
             </div>
         </section>
-
+        <div class="separator">
+            <hr>
+                <div class="separator-text">
+                    <h3>FEATURED PRODUCT</h3>
+                </div>
+            <hr>
+        </div>
         <section class="featured">
             <h3>Featured Categories</h3>
             <div class="category-grid">
