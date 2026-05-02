@@ -2,7 +2,7 @@
 session_start();
 include '../../includes/header_admin.php';
 ?>
-    <div class="body-container">
+<div class="body-container">
         <div class="sidebar-container">
             <nav>
                 <div class="sidebar">
@@ -40,22 +40,12 @@ include '../../includes/header_admin.php';
                 </div>
             </nav>
         </div>
-        <div class="main-content">
+        <div class="user-content">
             <div class="header-text">
                 <div class="text-container">
-                    <h2>Dashboard Overview</h2>
-                    <p>Welcome back, Admin. Here's what's happening today.</p>
+                    <h2>Users</h2>
+                    <p>View and manage registered customer accounts</p>
                 </div>
-            </div>
-            <div class="con-top">
-                <div class="con1"></div>
-                <div class="con2"></div>
-                <div class="con3"></div>
-                <div class="con4"></div>
-            </div>
-            <div class="con-bottom">
-                <div class="conb1"></div>
-                <div class="conb2"></div>
             </div>
         </div>
     </div>

@@ -37,7 +37,7 @@ if ($action === '') {
 if ($action === 'register') {
     $email = trim($_POST['email'] ?? '');
     $phone_no = trim($_POST['phone_no'] ?? '');
-    $password = ($_POST['password'] ?? '');
+    $password = trim($_POST['password'] ?? '');
     
     if ($email === '' || $phone_no === '' || $password === '') { 
         flash('err', 'Registration failed: email, phone number and password are required.');
@@ -82,7 +82,7 @@ if ($action === 'register') {
 // LOGIN
 if ($action === 'login') {
     $login_id = trim($_POST['login_id'] ?? '');
-    $password = ($_POST['password'] ?? '');
+    $password = trim($_POST['password'] ?? '');
 
     if ($login_id === '' || $password === '') { 
         flash('err', 'Login failed: username and password are required.');
@@ -112,8 +112,13 @@ if ($action === 'login') {
             ];
 
             flash('ok', 'Login successful!'); 
-            
-            header("Location: ../index.php");
+            if($row['role'] === 'admin'){
+                header("Location: ../pages/admin/dashboard.php");
+                exit;
+            }else{
+                header("Location: ../index.php");
+                exit;
+            }
             exit;
         } else { 
             flash('err', 'Login failed: invalid username or password.'); 
