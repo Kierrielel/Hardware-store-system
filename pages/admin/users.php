@@ -1,8 +1,19 @@
 <?php
+// ================= SESSION + SETUP =================
+// Start the session so we can access logged-in admin data
 session_start();
+
+// Include the admin header (top navigation / design)
 include '../../includes/header_admin.php';
+
+// Include database connection so we can query the database
+include '../../backend/db_connect.php';
 ?>
+
 <div class="body-container">
+
+        <!-- ================= SIDEBAR NAVIGATION ================= -->
+        <!-- This is the menu on the left side for navigating different admin pages -->
         <div class="sidebar-container">
             <nav>
                 <div class="sidebar">
@@ -17,6 +28,23 @@ include '../../includes/header_admin.php';
                         <div class="products">
                             <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z"/></svg>
                             <p class="products-text">Products</p>
+                        </div>
+                    </a>
+                    <a href="../admin/categories.php">
+                        <div class="categories">
+                            <svg width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.00004 12.5H14V13.5H7.00004V12.5ZM3.58504 13L2.29504 14.29L3.00004 15L5.00004 13L3.00004 11L2.29004 11.705L3.58504 13ZM7.00004 7.5H14V8.5H7.00004V7.5ZM3.58504 8L2.29504 9.29L3.00004 10L5.00004 8L3.00004 6L2.29004 6.705L3.58504 8ZM7.00004 2.5H14V3.5H7.00004V2.5ZM3.58504 3L2.29504 4.29L3.00004 5L5.00004 3L3.00004 1L2.29004 1.705L3.58504 3Z" fill="white"/>
+                            </svg>
+                            <p class="categories-text">Categories</p>
+                        </div>
+                    </a>
+                    <a href="../admin/finance.php">
+                        <div class="finance">
+                            <svg width="32" height="32" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.125 4.125V26.125C4.125 26.8543 4.41473 27.5538 4.93046 28.0695C5.44618 28.5853 6.14565 28.875 6.875 28.875H28.875" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M26.125 12.375L19.25 19.25L13.75 13.75L9.625 17.875" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>                            
+                            <p class="finance-text">Finance Report</p>
                         </div>
                     </a>
                     <a href="../admin/orders.php">
@@ -40,13 +68,104 @@ include '../../includes/header_admin.php';
                 </div>
             </nav>
         </div>
+
+        <!-- ================= USERS PAGE CONTENT ================= -->
+        <!-- This section displays all registered customers -->
         <div class="user-content">
+
+            <!-- Page header -->
             <div class="header-text">
                 <div class="text-container">
                     <h2>Users</h2>
                     <p>View and manage registered customer accounts</p>
                 </div>
             </div>
+
+            <div class="users-table-container">
+
+            <?php
+                // ================= CHECK IF THERE ARE USERS =================
+                // Count how many users have the role "customer"
+                $check_sql = "SELECT COUNT(*) as total FROM users WHERE role = 'customer'";
+                $check_result = mysqli_query($conn, $check_sql);
+                $check_row = mysqli_fetch_assoc($check_result);
+
+                // If no users exist, show a message instead of a table
+                if($check_row['total'] == 0) {
+                ?>
+                    <div class="empty-container">
+                        <h3>There are no users</h3>
+                    </div>
+
+                <?php
+                } else {
+                ?>
+
+                <!-- ================= USERS TABLE ================= -->
+                <!-- This table displays all customer accounts -->
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Phone no.</th>
+                            <th>Email</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <?php
+                            // ================= FETCH USERS FROM DATABASE =================
+                            // Get all users with role "customer"
+                            $sql = "SELECT * FROM users WHERE role = 'customer'";
+                            $result = mysqli_query($conn, $sql);
+
+                            // Check if there are results
+                            if(mysqli_num_rows($result) > 0){
+
+                                // Loop through each user and display them in the table
+                                while($row = mysqli_fetch_assoc($result)){
+                                    echo "<tr>";
+                                    ?>
+
+                                    <!-- Display username -->
+                                    <td id="name-text"><?php echo $row["username"] ?></td>
+
+                                    <!-- Display phone number -->
+                                    <td id="phone-text"><?php echo $row["phone_no"]; ?></td>
+
+                                    <!-- Display email -->
+                                    <td><span id="email-con"> <?php echo $row["email"]; ?></span></td>
+
+                                    <!-- ================= ACTION BUTTON ================= -->
+                                    <!-- Delete button allows admin to remove a user -->
+                                    <td>
+                                        <div class="action-buttons">
+
+                                            <!-- Sends user ID to delete_user.php -->
+                                            <!-- confirm() shows a popup before deleting -->
+                                            <a href="../../backend/delete_user.php?id=<?= $row['id'] ?>" onclick="return confirm('Are you sure you want to remove this user?')">
+                                                <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                    <path d="M8 10V16M12 10V16M17 5V19C17 19.5304 16.7893 20.0391 16.4142 20.4142C16.0391 20.7893 15.5304 21 15 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5M1 5H19M6 5V3C6 2.46957 6.21071 1.96086 6.58579 1.58579C6.96086 1.21071 7.46957 1 8 1H12C12.5304 1 13.0391 1.21071 13.4142 1.58579C13.7893 1.96086 14 2.46957 14 3V5" stroke="#F52A2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                                </svg>
+                                            </a>
+
+                                        </div>
+                                    </td>
+
+                                    <?php
+                                    echo "</tr>";
+                                }    
+                            }
+                        ?>
+
+                    </tbody>
+                </table>
+
+                <?php
+                }
+            ?>
+
         </div>
     </div>
 </body>

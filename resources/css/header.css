@@ -31,7 +31,7 @@
     background-image: linear-gradient(135deg, #4c5e83, #7d9cd2);
 }
 nav {
-    height: 40px;
+    height: 45px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
@@ -92,15 +92,40 @@ nav .home-link .shop-link {
 .search-icon {
     color: rgba(0, 0, 0, 0.25);
 }
-.footer div {
-    height: 40px;
-    background-color: white;
+#footer-container p {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: auto;
-}
-#footer-container p {
     font-size: 0.7em;
     color: rgba(128, 128, 128, 0.542);
+    height: 40px;
+}
+.store-info-section {
+    background-color: #15387b;
+    height: 100px;
+}
+.store-info-card {
+    gap: 5px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    background-color: #15387b;
+}
+.store-info-card h3 {
+    font-size: 1em;
+    color: rgb(255, 255, 255);
+}
+.store-info-card p {
+    color: rgba(182, 182, 182, 0.542);
+    font-size: 0.8em;
+}
+.user-login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.user-login p {
+    font-size: 0.7em;
 }

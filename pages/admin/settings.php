@@ -1,8 +1,19 @@
 <?php
+// ================= SESSION + SETUP =================
+// Start the session so we can access logged-in user data (like username, email, etc.)
 session_start();
+
+// Include the admin header (UI layout like top bar)
 include '../../includes/header_admin.php';
+
+// Include database connection so we can interact with the database
+include '../../backend/db_connect.php';
 ?>
+
 <div class="body-container">
+
+        <!-- ================= SIDEBAR NAVIGATION ================= -->
+        <!-- This is the admin menu where users can navigate to different pages -->
         <div class="sidebar-container">
             <nav>
                 <div class="sidebar">
@@ -17,6 +28,23 @@ include '../../includes/header_admin.php';
                         <div class="products">
                             <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z"/></svg>
                             <p class="products-text">Products</p>
+                        </div>
+                    </a>
+                    <a href="../admin/categories.php">
+                        <div class="categories">
+                            <svg width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.00004 12.5H14V13.5H7.00004V12.5ZM3.58504 13L2.29504 14.29L3.00004 15L5.00004 13L3.00004 11L2.29004 11.705L3.58504 13ZM7.00004 7.5H14V8.5H7.00004V7.5ZM3.58504 8L2.29504 9.29L3.00004 10L5.00004 8L3.00004 6L2.29004 6.705L3.58504 8ZM7.00004 2.5H14V3.5H7.00004V2.5ZM3.58504 3L2.29504 4.29L3.00004 5L5.00004 3L3.00004 1L2.29004 1.705L3.58504 3Z" fill="white"/>
+                            </svg>
+                            <p class="categories-text">Categories</p>
+                        </div>
+                    </a>
+                    <a href="../admin/finance.php">
+                        <div class="finance">
+                            <svg width="32" height="32" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M4.125 4.125V26.125C4.125 26.8543 4.41473 27.5538 4.93046 28.0695C5.44618 28.5853 6.14565 28.875 6.875 28.875H28.875" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M26.125 12.375L19.25 19.25L13.75 13.75L9.625 17.875" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>                            
+                            <p class="finance-text">Finance Report</p>
                         </div>
                     </a>
                     <a href="../admin/orders.php">
@@ -40,12 +68,160 @@ include '../../includes/header_admin.php';
                 </div>
             </nav>
         </div>
+
+        <!-- ================= SETTINGS PAGE CONTENT ================= -->
+        <!-- This section allows the admin to update account info and password -->
         <div class="settings-content">
+
+            <!-- Page header -->
             <div class="header-text">
                 <div class="text-container">
                     <h2>Settings</h2>
                     <p>Configure your store preferences and account details</p>
                 </div>
+            </div>
+
+            <!-- ================= SUCCESS MESSAGE ================= -->
+            <!-- Shows a message if something was updated successfully -->
+            <?php if (isset($_GET['success'])): ?>
+                <div class="alert-success">
+                    <?php 
+                    if($_GET['success'] === 'account') echo "Account information updated successfully!";
+                    if($_GET['success'] === 'password') echo "Password changed successfully!";
+                    ?>
+                </div>
+            <?php endif; ?>
+            
+            <!-- ================= ERROR MESSAGE ================= -->
+            <!-- Shows error messages based on what went wrong -->
+            <?php if (isset($_GET['error'])): ?>
+                <div class="alert-error">
+                    <?php 
+                    if($_GET['error'] === 'account') echo "Failed to update account information.";
+                    if($_GET['error'] === 'wrongformat') echo "mobile number must be 11 digits and start with 09.";
+                    if($_GET['error'] === 'wrong_password') echo "Current password is incorrect.";
+                    if($_GET['error'] === 'password_mismatch') echo "New passwords do not match.";
+                    if($_GET['error'] === 'password_short') echo "Password must be at least 8 characters.";
+                    if($_GET['error'] === 'password') echo "Failed to change password.";
+                    ?>
+                </div>
+            <?php endif; ?>
+            
+            <!-- ================= SETTINGS CARDS ================= -->
+            <div class="setting-card-container">
+                <div class="align-container">
+
+                    <!-- ================= ACCOUNT INFORMATION FORM ================= -->
+                    <!-- This form allows the admin to update username, email, and phone -->
+                    <div class="store-info-container">
+                        <div class="card-header">
+                            <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11 12.7188C13.468 12.7188 15.4688 10.718 15.4688 8.25C15.4688 5.78198 13.468 3.78125 11 3.78125C8.53198 3.78125 6.53125 5.78198 6.53125 8.25C6.53125 10.718 8.53198 12.7188 11 12.7188Z" stroke="#0C933E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M3.78125 19.5938C3.78125 16.1562 6.53125 12.7188 11 12.7188C15.4688 12.7188 18.2188 16.1562 18.2188 19.5938" stroke="#0C933E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>      
+                            <h3>Account Information</h3>
+                        </div>
+
+                        <div class="card-body">
+                            <!-- When submitted, data is sent to update_settings.php -->
+                            <form action="../../backend/update_settings.php" method="POST" onsubmit="return confirm('Update your account information?');">
+
+                                <!-- Username and Email -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Username</label>
+                                        <!-- Value is pre-filled using session data -->
+                                        <input type="text" name="username" value="<?= $_SESSION['user']['username'] ?>" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Email</label>
+                                        <input type="email" name="email" value="<?= $_SESSION['user']['email'] ?>" required>
+                                    </div>
+                                </div>
+
+                                <!-- Phone number and role -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Phone Number</label>
+                                        <input type="text" name="phone_no" value="<?= $_SESSION['user']['phone_no'] ?>" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Role</label>
+                                        <!-- Disabled means user cannot edit this -->
+                                        <input type="text" value="<?= $_SESSION['user']['role'] ?>" disabled>
+                                    </div>
+                                </div>
+
+                                <!-- Submit button -->
+                                <div class="form-buttons">
+                                    <button type="submit" name="update_account" class="savebtn">Save Changes</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- ================= CHANGE PASSWORD FORM ================= -->
+                    <!-- This form allows the admin to change their password -->
+                    <div class="account-setting-container">
+                        <div class="card-header">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.586 17.414C2.2109 17.789 2.00011 18.2976 2 18.828V21C2 21.2653 2.10536 21.5196 2.29289 21.7071C2.48043 21.8947 2.73478 22 3 22H6C6.26522 22 6.51957 21.8947 6.70711 21.7071C6.89464 21.5196 7 21.2653 7 21V20C7 19.7348 7.10536 19.4805 7.29289 19.2929C7.48043 19.1054 7.73478 19 8 19H9C9.26522 19 9.51957 18.8947 9.70711 18.7071C9.89464 18.5196 10 18.2653 10 18V17C10 16.7348 10.1054 16.4805 10.2929 16.2929C10.4804 16.1054 10.7348 16 11 16H11.172C11.7024 15.9999 12.211 15.7891 12.586 15.414L13.4 14.6C14.7898 15.0842 16.3028 15.0823 17.6915 14.5948C19.0801 14.1072 20.2622 13.1629 21.0444 11.9162C21.8265 10.6695 22.1624 9.19421 21.9971 7.73178C21.8318 6.26934 21.1751 4.90629 20.1344 3.86561C19.0937 2.82493 17.7307 2.16822 16.2683 2.00293C14.8058 1.83763 13.3306 2.17353 12.0839 2.95568C10.8372 3.73782 9.89279 4.91991 9.40525 6.30856C8.91771 7.69721 8.91585 9.2102 9.4 10.6L2.586 17.414Z" stroke="#0C933E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M16.5 8C16.7761 8 17 7.77614 17 7.5C17 7.22386 16.7761 7 16.5 7C16.2239 7 16 7.22386 16 7.5C16 7.77614 16.2239 8 16.5 8Z" fill="#0C933E" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <h3>Change Password</h3>
+                        </div>
+
+                        <div class="card-body">
+                            <form action="../../backend/update_settings.php" method="POST" onsubmit="return confirm('Update your password?');">
+
+                                <!-- Current and new password -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Current Password</label>
+                                        <input type="password" name="current_password" placeholder="Enter current password" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>New Password</label>
+                                        <input type="password" name="new_password" placeholder="Enter new password" required>
+                                    </div>
+                                </div>
+
+                                <!-- Confirm new password -->
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Confirm New Password</label>
+                                        <input type="password" name="confirm_password" placeholder="Confirm new password" required>
+                                    </div>
+                                </div>
+
+                                <!-- Submit button -->
+                                <div class="form-buttons">
+                                    <button type="submit" name="change_password" class="savebtn">Change Password</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ================= LOGOUT FORM ================= -->
+                <!-- This form logs the user out when submitted -->
+                <form action="/Hardware_Store_System/backend/process_login.php" method="post" onsubmit="return confirm('Are you sure you want to logout?');">
+                    
+                    <!-- Hidden input tells the backend this is a logout action -->
+                    <input type="hidden" name="action" value="signout">
+
+                    <button id="signbutton" type="submit">
+                        <div class="signout">
+                            <svg width="33" height="35" viewBox="0 0 33 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M28.5571 17.4999H10.9873" stroke="black" stroke-linecap="square"/>
+                                <path d="M25.0649 12.7241L29.5887 17.5002L25.0649 22.2777" stroke="black" stroke-linecap="square"/>
+                                <path d="M17.8816 24.2447V27.9895C17.8816 29.6464 16.5385 30.9895 14.8816 30.9895H6.41113C4.75428 30.9895 3.41113 29.6464 3.41113 27.9895V7.01037C3.41113 5.35352 4.75428 4.01038 6.41113 4.01038H14.8816C16.5385 4.01038 17.8816 5.35352 17.8816 7.01038V10.7552" stroke="black" stroke-linecap="square"/>
+                            </svg>
+                            Sign Out
+                        </div>
+                    </button>   
+                </form>  
+
             </div>
         </div>
     </div>

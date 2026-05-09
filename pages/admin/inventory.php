@@ -1,94 +1,315 @@
 <?php
+// Start a session so we can access user data (like login info)
 session_start();
-include '../../backend/db_connect.php';
+
+// Include the admin header (UI layout like top bar)
 include '../../includes/header_admin.php';
+
+// Include database connection so we can run queries
+include '../../backend/db_connect.php';
 ?>
-<div class="body-container">
-        <div class="sidebar-container">
-            <nav>
-                <div class="sidebar">
-                    <h4>MENU</h4>
-                    <a href="../admin/dashboard.php">
-                        <div class="home">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
-                            <p class="home-text">Dashboard</p>
-                        </div>
-                    </a>
-                    <a href="../admin/inventory.php">
-                        <div class="products">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z"/></svg>
-                            <p class="products-text">Products</p>
-                        </div>
-                    </a>
-                    <a href="../admin/orders.php">
-                        <div class="orders">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M223.5-103.5Q200-127 200-160t23.5-56.5Q247-240 280-240t56.5 23.5Q360-193 360-160t-23.5 56.5Q313-80 280-80t-56.5-23.5Zm400 0Q600-127 600-160t23.5-56.5Q647-240 680-240t56.5 23.5Q760-193 760-160t-23.5 56.5Q713-80 680-80t-56.5-23.5ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/></svg>
-                            <p class="orders-text">Orders</p>
-                        </div>
-                    </a>
-                    <a href="../admin/users.php">
-                        <div class="users">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M555-435q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35ZM400-160v-76q0-21 10-40t28-30q45-27 95.5-40.5T640-360q56 0 106.5 13.5T842-306q18 11 28 30t10 40v76H400Zm86-80h308q-35-20-74-30t-80-10q-41 0-80 10t-74 30Zm182.5-251.5Q680-503 680-520t-11.5-28.5Q657-560 640-560t-28.5 11.5Q600-537 600-520t11.5 28.5Q623-480 640-480t28.5-11.5ZM640-520Zm0 280ZM120-400v-80h320v80H120Zm0-320v-80h480v80H120Zm324 160H120v-80h360q-14 17-22.5 37T444-560Z"/></svg>
-                            <p class="users-text">Users</p>
-                        </div>
-                    </a>
-                    <a href="../admin/settings.php">
-                        <div class="settings">
-                            <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
-                            <p class="settings-text">Settings</p>
-                        </div>
-                    </a>
-                </div>
-            </nav>
+
+<!-- =========================
+     POPUP FORM: ADD PRODUCT
+     This section creates a popup form where admin can add a new product
+========================= -->
+<div class="PopupOverlay">
+    <div class="popupBox">
+        <div class="popheader">
+            <p>Add New Product</p>
         </div>
-        <div class="inventory-content">
-            <div class="header-text">
-                <div class="text-container">
-                    <h2>Product Inventory</h2>
-                    <p>Manage your items, prices, and stock</p>
+
+        <!-- Form that sends product data to backend/add_product.php -->
+        <div class="prod-details-con">
+            <form action="../../backend/add_product.php" method="post" enctype="multipart/form-data">
+                
+                <!-- Product Name input -->
+                <div class="form-group">
+                    <label for="product_name">Product Name</label>
+                    <input type="text" name="product_name" id="product_name" required>
                 </div>
-                <a href="#" id="addbtn">
-                    <div class="addbtn">
-                        <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/></svg>
-                        <p>Add Product</p>
+
+                <!-- Row for Brand and Category -->
+                <div class="form-row">
+
+                    <!-- Brand input -->
+                    <div class="form-group">
+                        <label for="brand">Brand</label>
+                        <input type="text" name="brand" id="brand" placeholder="e.g. Boysen" required>
+                    </div>
+
+                    <!-- Category dropdown (data comes from database) -->
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select name="category_id" id="category" required>
+                            <option value="">Select Category</option>
+
+                            <?php
+                            // Get all categories from database
+                            $cat_sql = "SELECT * FROM categories";
+                            $cat_result = mysqli_query($conn, $cat_sql);
+
+                            // Loop through categories and show them as options
+                            while ($cat = mysqli_fetch_assoc($cat_result)) {
+                                echo "<option value='" . $cat['id'] . "'>" . $cat['name'] . "</option>";
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Row for Price and Stock -->
+                <div class="form-row">
+
+                    <!-- Price input -->
+                    <div class="form-group">
+                        <label for="price">Price (₱)</label>
+                        <input type="number" step="0.01" min="0" name="price" id="price" placeholder="0" required>
+                    </div>
+
+                    <!-- Stock input -->
+                    <div class="form-group">
+                        <label for="stock">Stock</label>
+                        <input type="number" min="0" name="stock" id="stock" placeholder="0" required>
+                    </div>
+                </div>
+
+                <!-- Image upload -->
+                <div class="form-group">
+                    <label for="image">Image</label>
+                    <input type="file" name="image" id="image" accept="image/*" required>
+                </div>
+
+                <!-- Product description -->
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea name="description" id="description" placeholder="Enter your product details..."></textarea>
+                </div>
+
+                <!-- Buttons -->
+                <div class="form-buttons">
+
+                    <!-- Cancel button hides popup -->
+                    <button type="button" class="cancelbtn" onclick="document.querySelector('.PopupOverlay').style.display='none'">Cancel</button>
+
+                    <!-- Submit button sends form -->
+                    <button type="submit" class="savebtn" value="add">Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- =========================
+     MAIN PAGE LAYOUT
+========================= -->
+<div class="body-container">
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-container">
+        <nav>
+            <div class="sidebar">
+                <h4>MENU</h4>
+                <a href="../admin/dashboard.php">
+                    <div class="home">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z"/></svg>
+                        <p class="home-text">Dashboard</p>
+                    </div>
+                </a>
+                <a href="../admin/inventory.php">
+                    <div class="products">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M200-80q-33 0-56.5-23.5T120-160v-451q-18-11-29-28.5T80-680v-120q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v120q0 23-11 40.5T840-611v451q0 33-23.5 56.5T760-80H200Zm0-520v440h560v-440H200Zm-40-80h640v-120H160v120Zm200 280h240v-80H360v80Zm120 20Z"/></svg>
+                        <p class="products-text">Products</p>
+                    </div>
+                </a>
+                <a href="../admin/categories.php">
+                    <div class="categories">
+                        <svg width="32" height="32" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.00004 12.5H14V13.5H7.00004V12.5ZM3.58504 13L2.29504 14.29L3.00004 15L5.00004 13L3.00004 11L2.29004 11.705L3.58504 13ZM7.00004 7.5H14V8.5H7.00004V7.5ZM3.58504 8L2.29504 9.29L3.00004 10L5.00004 8L3.00004 6L2.29004 6.705L3.58504 8ZM7.00004 2.5H14V3.5H7.00004V2.5ZM3.58504 3L2.29504 4.29L3.00004 5L5.00004 3L3.00004 1L2.29004 1.705L3.58504 3Z" fill="white"/>
+                        </svg>
+                        <p class="categories-text">Categories</p>
+                    </div>
+                </a>
+                <a href="../admin/finance.php">
+                    <div class="finance">
+                        <svg width="32" height="32" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M4.125 4.125V26.125C4.125 26.8543 4.41473 27.5538 4.93046 28.0695C5.44618 28.5853 6.14565 28.875 6.875 28.875H28.875" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M26.125 12.375L19.25 19.25L13.75 13.75L9.625 17.875" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>                            
+                        <p class="finance-text">Finance Report</p>
+                    </div>
+                </a>
+                <a href="../admin/orders.php">
+                    <div class="orders">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M223.5-103.5Q200-127 200-160t23.5-56.5Q247-240 280-240t56.5 23.5Q360-193 360-160t-23.5 56.5Q313-80 280-80t-56.5-23.5Zm400 0Q600-127 600-160t23.5-56.5Q647-240 680-240t56.5 23.5Q760-193 760-160t-23.5 56.5Q713-80 680-80t-56.5-23.5ZM246-720l96 200h280l110-200H246Zm-38-80h590q23 0 35 20.5t1 41.5L692-482q-11 20-29.5 31T622-440H324l-44 80h480v80H280q-45 0-68-39.5t-2-78.5l54-98-144-304H40v-80h130l38 80Zm134 280h280-280Z"/></svg>
+                        <p class="orders-text">Orders</p>
+                    </div>
+                </a>
+                <a href="../admin/users.php">
+                    <div class="users">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="M555-435q-35-35-35-85t35-85q35-35 85-35t85 35q35 35 35 85t-35 85q-35 35-85 35t-85-35ZM400-160v-76q0-21 10-40t28-30q45-27 95.5-40.5T640-360q56 0 106.5 13.5T842-306q18 11 28 30t10 40v76H400Zm86-80h308q-35-20-74-30t-80-10q-41 0-80 10t-74 30Zm182.5-251.5Q680-503 680-520t-11.5-28.5Q657-560 640-560t-28.5 11.5Q600-537 600-520t11.5 28.5Q623-480 640-480t28.5-11.5ZM640-520Zm0 280ZM120-400v-80h320v80H120Zm0-320v-80h480v80H120Zm324 160H120v-80h360q-14 17-22.5 37T444-560Z"/></svg>
+                        <p class="users-text">Users</p>
+                    </div>
+                </a>
+                <a href="../admin/settings.php">
+                    <div class="settings">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 -960 960 960" width="32px" fill="#e3e3e3"><path d="m370-80-16-128q-13-5-24.5-12T307-235l-119 50L78-375l103-78q-1-7-1-13.5v-27q0-6.5 1-13.5L78-585l110-190 119 50q11-8 23-15t24-12l16-128h220l16 128q13 5 24.5 12t22.5 15l119-50 110 190-103 78q1 7 1 13.5v27q0 6.5-2 13.5l103 78-110 190-118-50q-11 8-23 15t-24 12L590-80H370Zm70-80h79l14-106q31-8 57.5-23.5T639-327l99 41 39-68-86-65q5-14 7-29.5t2-31.5q0-16-2-31.5t-7-29.5l86-65-39-68-99 42q-22-23-48.5-38.5T533-694l-13-106h-79l-14 106q-31 8-57.5 23.5T321-633l-99-41-39 68 86 64q-5 15-7 30t-2 32q0 16 2 31t7 30l-86 65 39 68 99-42q22 23 48.5 38.5T427-266l13 106Zm42-180q58 0 99-41t41-99q0-58-41-99t-99-41q-59 0-99.5 41T342-480q0 58 40.5 99t99.5 41Zm-2-140Z"/></svg>
+                        <p class="settings-text">Settings</p>
                     </div>
                 </a>
             </div>
-            <div class="product-table-container">
+        </nav>
+    </div>
 
-                <table class="product-table">
-                    <thead>
-                        <tr>
-                            <th>PRODUCT</th>
-                            <th>CATEGORY</th>
-                            <th>PRICE</th>
-                            <th>STOCK</th>
-                            <th>ACTION</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                            $sql = "SELECT * FROM products";
-                            $result = mysqli_query($conn, $sql);
- 
-                            if(mysqli_num_rows($result) > 0){
-                                while($row = mysqli_fetch_assoc($result)){
-                                    echo "<tr>";
-                                    echo "<td>" .$row["name"] . "</td>";
-                                    echo "<td>" .$row["category_id"] . "</td>";
-                                    echo "<td>" .$row["price"] . "</td>";
-                                    echo "<td>" .$row["stock_quantity"] . "</td>";
-                                    echo "<td><a href='./pages/student/update.php?id=".$row["id"]."' class='btn'>edit</a></td>";
-                                    echo "<td><a href='./pages/student/delete.php?id=".$row["id"]."' class='btn' id='delete'>delete</a></td>";
-                                    echo "</tr>";
-                                }    
-                            }
-                        ?>
-                    </tbody>
-                </table>
+    <!-- =========================
+         INVENTORY SECTION
+    ========================= -->
+    <div class="inventory-content">
 
+        <!-- =========================
+             SUCCESS MESSAGE
+             Shows when a product is added/updated/deleted
+        ========================= -->
+        <?php if (isset($_GET['success'])): ?>
+            <div class="alert-success">
+                <?php
+                if($_GET['success'] === 'updated') echo "Product updated successfully!";
+                if($_GET['success'] === 'added') echo "Product added successfully!";
+                if($_GET['success'] === 'deleted') echo "Product deleted successfully!";
+                ?>
             </div>
+        <?php endif; ?>
+
+        <!-- Error message: product already exists -->
+        <?php if (isset($_GET['error']) && $_GET['error'] === 'product_exists'): ?>
+            <div class="alert-error">
+                A product with that name already exists.
+            </div>
+        <?php endif; ?>
+
+        <!-- Error message: delete failed -->
+        <?php if (isset($_GET['error']) && $_GET['error'] === 'failed_to_delete'): ?>
+            <div class="alert-error">
+                Failed to delete the product.
+            </div>
+        <?php endif; ?>
+
+        <!-- Page Header -->
+        <div class="header-text">
+            <div class="text-container">
+                <h2>Product Inventory</h2>
+                <p>Manage your items, prices, and stock</p>
+            </div>
+
+            <!-- Button to open Add Product popup -->
+            <a id="addbtn">
+                <div class="addbtn" onclick="document.querySelector('.PopupOverlay').style.display='flex'">
+                    <p>Add Product</p>
+                </div>
+            </a>
+        </div>
+
+        <!-- =========================
+             CHECK IF PRODUCTS EXIST
+        ========================= -->
+        <div class="product-table-container">
+
+        <?php
+            // Count how many products are in database
+            $check_sql = "SELECT COUNT(*) as total FROM products";
+            $check_result = mysqli_query($conn, $check_sql);
+            $check_row = mysqli_fetch_assoc($check_result);
+
+            // If no products, show empty message
+            if($check_row['total'] == 0) {
+        ?>
+                <div class="empty-container">
+                    <h3>There are currently no items</h3>
+                </div>
+
+        <?php
+            } else {
+        ?>
+
+        <!-- =========================
+             PRODUCT TABLE
+        ========================= -->
+        <table class="product-table">
+            <thead>
+                <tr>
+                    <th>PRODUCT</th>
+                    <th>CATEGORY</th>
+                    <th>PRICE</th>
+                    <th>STOCK</th>
+                    <th>ACTION</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <?php
+                    // Get products and their category names
+                    $sql = "SELECT products.*, categories.name AS category_name 
+                            FROM products 
+                            JOIN categories ON products.category_id = categories.id";
+
+                    $result = mysqli_query($conn, $sql);
+
+                    // Loop through each product and display it
+                    if(mysqli_num_rows($result) > 0){
+                        while($row = mysqli_fetch_assoc($result)){
+                            echo "<tr>";
+                ?>
+
+                <!-- Product Name -->
+                <td id="prodname-text"><?php echo $row["name"] ?></td>
+
+                <!-- Category -->
+                <td><span id="catcon"><?php echo $row["category_name"]; ?></span></td>
+
+                <!-- Price -->
+                <td id="price-text"><?php echo "₱".$row["price"]; ?></td>
+
+                <!-- Stock -->
+                <td class="stocktext-admin">
+                    <?php echo $row["stock_quantity"] . " left"; ?>
+                </td>
+
+                <!-- Actions: Edit and Delete -->
+                <td>
+                    <div class="action-buttons">
+
+                        <!-- Edit button (goes to edit page) -->
+                        <a href="edit_product.php?id=<?= $row['id'] ?>">
+                            <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M2.08333 16.6667H3.56771L13.75 6.48438L12.2656 5L2.08333 15.1823V16.6667ZM0 18.75V14.3229L13.75 0.598958C13.9583 0.407986 14.1885 0.260417 14.4406 0.15625C14.6927 0.0520834 14.9573 0 15.2344 0C15.5115 0 15.7806 0.0520834 16.0417 0.15625C16.3028 0.260417 16.5285 0.416667 16.7187 0.625L18.151 2.08333C18.3594 2.27431 18.5115 2.5 18.6073 2.76042C18.7031 3.02083 18.7507 3.28125 18.75 3.54167C18.75 3.81944 18.7024 4.08437 18.6073 4.33646C18.5122 4.58854 18.3601 4.8184 18.151 5.02604L4.42708 18.75H0ZM12.9948 5.75521L12.2656 5L13.75 6.48438L12.9948 5.75521Z" fill="#3779B2"/>
+                            </svg>
+                        </a>
+
+                        <!-- Delete button (asks confirmation before deleting) -->
+                        <a href="../../backend/delete_product.php?id=<?= $row['id'] ?>" 
+                           onclick="return confirm('Are you sure you want to remove this item?')">
+                            <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 10V16M12 10V16M17 5V19C17 19.5304 16.7893 20.0391 16.4142 20.4142C16.0391 20.7893 15.5304 21 15 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5M1 5H19M6 5V3C6 2.46957 6.21071 1.96086 6.58579 1.58579C6.96086 1.21071 7.46957 1 8 1H12C12.5304 1 13.0391 1.21071 13.4142 1.58579C13.7893 1.96086 14 2.46957 14 3V5" stroke="#F52A2A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+
+                    </div>
+                </td>
+
+                <?php
+                        echo "</tr>";
+                    }
+                }
+                ?>
+            </tbody>
+        </table>
+
+        <?php
+            }
+        ?>
         </div>
     </div>
+</div>
+
 </body>
 </html>

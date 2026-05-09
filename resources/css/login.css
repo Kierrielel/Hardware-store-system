@@ -10,10 +10,15 @@
     justify-content: center;
 }
 body {
-    background: linear-gradient(135deg, #5b5f6a, #2c2f38);
+    background-image:
+        linear-gradient(to right, #7e8cf6, rgba(0, 0, 0, 0)),
+        url("../images/bg.png");
+    background-size: cover;
+    background-position: center;
     padding: min(5em, 8%);
     height: 100vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
 }
@@ -114,4 +119,13 @@ form {
     left: 10px;
     font-size: 0.98rem;
     color: #060d18;
+}
+.alert-container {
+    display: flex;
+    justify-items: center;
+    width: 500px;
+    max-width: 1200px;
+    position: fixed;
+    top: 10px;         
+    z-index: 1000px; 
 }

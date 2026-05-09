@@ -14,17 +14,36 @@ body {
     display: flex;
     flex-direction: column;
 }
-
 .content {
+    overflow-y: auto;
     flex: 1 0 auto;
 }
-
 .footer {
     flex-shrink: 0;
 }
-
 .container {
     padding: 0;
+}
+.banner-container {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 300px;
+}
+.banner-left {
+    flex: 2;
+    overflow: hidden;
+}
+.banner-left .slider-wrapper {
+    max-width: 100%;
+    height: 100%;
+}
+.banner-left .slider img {
+    height: 300px;
+}
+.banner-right {
+    flex: 1;
+    min-height: 300px;
 }
 .slider-wrapper {
     position: relative;
@@ -74,23 +93,67 @@ body {
 .separator {
     padding: 20px;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 }
-.separator-text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 500px;
-
-}
-.separator-text h3{
+.separator h3 {
     font-size: 1em;
 }
-.separator hr {
-    width: 80%;
-    height: 1.7px;
-    border: none;
-    border-radius: 30%;
-    background-color: black;
+.product-grid {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+    justify-content: center;
+}
+.product-card-featured {
+    background-color: white;
+    height: 180px;
+    width: 350px;
+    display: flex;
+    flex-direction: row;
+    border: 1px solid rgba(143, 143, 143, 0.5);
+}
+.img-con {
+    margin: 15px;
+}
+.prod-text-con {
+    margin: 15px;
+    display: flex;
+    flex-direction: column;
+}
+.prod-text-con p {
+    font-size: 1.2em;
+}
+.text-con {
+    height: 120px;
+}
+.prod-text-con h4 {
+    font-size: 1.2em;
+}
+.prod-link {
+    color: black;
+    text-decoration: none;
+}
+.cat-grid {
+    margin: 30px;
+    gap: 15px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.cat-grid a{
+    font-size: 0.8em;
+    text-decoration: none;
+    color: black;
+}
+.cat-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    height: 150px;
+    width: 150px;
+    border-radius: 50%;
+    border: 1px solid rgba(143, 143, 143, 0.5);
 }
