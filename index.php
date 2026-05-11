@@ -64,15 +64,25 @@ include 'includes/header.php';
             <div class="product-grid">
 
                 <?php 
-                // Get up to 8 products from the database
-                $sql = "SELECT * FROM products LiMIT 8";
+                // Get up to 8 best selling products from the database
+                $sql = "SELECT products.*, SUM(order_items.quantity) as total_sold FROM order_items JOIN products ON order_items.product_id = products.id GROUP BY products.id ORDER BY total_sold DESC LiMIT 8";
                 $result = mysqli_query($conn, $sql);
 
+                // if there are 8 best selling products show them
+                // otherwise just show the newest 8 products
+                if(mysqli_num_rows($result) >= 8){
+                    $display = $result;
+                }else {
+                    $normal_sql = "SELECT * FROM products LIMIT 8";
+                    $display = mysqli_query($conn, $normal_sql);
+                }
+
+
                 // Check if there are products
-                if(mysqli_num_rows($result) > 0){
+                if(mysqli_num_rows($display) > 0){
 
                     // Loop through each product
-                    while($row = mysqli_fetch_assoc($result)){
+                    while($row = mysqli_fetch_assoc($display)){
                 ?>
 
                     <!-- Each product is clickable and leads to its own page -->
