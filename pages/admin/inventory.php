@@ -1,55 +1,31 @@
 <?php
-// Start a session so we can access user data (like login info)
 session_start();
-
-// Include the admin header (UI layout like top bar)
 include '../../includes/header_admin.php';
-
-// Include database connection so we can run queries
 include '../../backend/db_connect.php';
 ?>
-
-<!-- =========================
-     POPUP FORM: ADD PRODUCT
-     This section creates a popup form where admin can add a new product
-========================= -->
 <div class="PopupOverlay">
     <div class="popupBox">
         <div class="popheader">
             <p>Add New Product</p>
         </div>
-
-        <!-- Form that sends product data to backend/add_product.php -->
         <div class="prod-details-con">
             <form action="../../backend/add_product.php" method="post" enctype="multipart/form-data">
-                
-                <!-- Product Name input -->
                 <div class="form-group">
                     <label for="product_name">Product Name</label>
                     <input type="text" name="product_name" id="product_name" required>
                 </div>
-
-                <!-- Row for Brand and Category -->
                 <div class="form-row">
-
-                    <!-- Brand input -->
                     <div class="form-group">
                         <label for="brand">Brand</label>
                         <input type="text" name="brand" id="brand" placeholder="e.g. Boysen" required>
                     </div>
-
-                    <!-- Category dropdown (data comes from database) -->
                     <div class="form-group">
                         <label for="category">Category</label>
                         <select name="category_id" id="category" required>
                             <option value="">Select Category</option>
-
                             <?php
-                            // Get all categories from database
                             $cat_sql = "SELECT * FROM categories";
                             $cat_result = mysqli_query($conn, $cat_sql);
-
-                            // Loop through categories and show them as options
                             while ($cat = mysqli_fetch_assoc($cat_result)) {
                                 echo "<option value='" . $cat['id'] . "'>" . $cat['name'] . "</option>";
                             }
@@ -57,55 +33,33 @@ include '../../backend/db_connect.php';
                         </select>
                     </div>
                 </div>
-
-                <!-- Row for Price and Stock -->
                 <div class="form-row">
-
-                    <!-- Price input -->
                     <div class="form-group">
                         <label for="price">Price (₱)</label>
                         <input type="number" step="0.01" min="0" name="price" id="price" placeholder="0" required>
                     </div>
-
-                    <!-- Stock input -->
                     <div class="form-group">
                         <label for="stock">Stock</label>
                         <input type="number" min="0" name="stock" id="stock" placeholder="0" required>
                     </div>
                 </div>
-
-                <!-- Image upload -->
                 <div class="form-group">
                     <label for="image">Image</label>
                     <input type="file" name="image" id="image" accept="image/*" required>
                 </div>
-
-                <!-- Product description -->
                 <div class="form-group">
                     <label for="description">Description</label>
                     <textarea name="description" id="description" placeholder="Enter your product details..."></textarea>
                 </div>
-
-                <!-- Buttons -->
                 <div class="form-buttons">
-
-                    <!-- Cancel button hides popup -->
                     <button type="button" class="cancelbtn" onclick="document.querySelector('.PopupOverlay').style.display='none'">Cancel</button>
-
-                    <!-- Submit button sends form -->
                     <button type="submit" class="savebtn" value="add">Add Product</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
-<!-- =========================
-     MAIN PAGE LAYOUT
-========================= -->
 <div class="body-container">
-
-    <!-- Sidebar Navigation -->
     <div class="sidebar-container">
         <nav>
             <div class="sidebar">
@@ -160,16 +114,7 @@ include '../../backend/db_connect.php';
             </div>
         </nav>
     </div>
-
-    <!-- =========================
-         INVENTORY SECTION
-    ========================= -->
     <div class="inventory-content">
-
-        <!-- =========================
-             SUCCESS MESSAGE
-             Shows when a product is added/updated/deleted
-        ========================= -->
         <?php if (isset($_GET['success'])): ?>
             <div class="alert-success">
                 <?php
@@ -179,48 +124,37 @@ include '../../backend/db_connect.php';
                 ?>
             </div>
         <?php endif; ?>
-
-        <!-- Error message: product already exists -->
         <?php if (isset($_GET['error']) && $_GET['error'] === 'product_exists'): ?>
             <div class="alert-error">
                 A product with that name already exists.
             </div>
         <?php endif; ?>
-
-        <!-- Error message: delete failed -->
         <?php if (isset($_GET['error']) && $_GET['error'] === 'failed_to_delete'): ?>
             <div class="alert-error">
                 Failed to delete the product.
             </div>
         <?php endif; ?>
 
-        <!-- Page Header -->
         <div class="header-text">
             <div class="text-container">
                 <h2>Product Inventory</h2>
                 <p>Manage your items, prices, and stock</p>
             </div>
 
-            <!-- Button to open Add Product popup -->
             <a id="addbtn">
                 <div class="addbtn" onclick="document.querySelector('.PopupOverlay').style.display='flex'">
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/></svg>
                     <p>Add Product</p>
                 </div>
             </a>
         </div>
-
-        <!-- =========================
-             CHECK IF PRODUCTS EXIST
-        ========================= -->
         <div class="product-table-container">
 
         <?php
-            // Count how many products are in database
             $check_sql = "SELECT COUNT(*) as total FROM products";
             $check_result = mysqli_query($conn, $check_sql);
             $check_row = mysqli_fetch_assoc($check_result);
 
-            // If no products, show empty message
             if($check_row['total'] == 0) {
         ?>
                 <div class="empty-container">
@@ -231,9 +165,6 @@ include '../../backend/db_connect.php';
             } else {
         ?>
 
-        <!-- =========================
-             PRODUCT TABLE
-        ========================= -->
         <table class="product-table">
             <thead>
                 <tr>
@@ -247,45 +178,28 @@ include '../../backend/db_connect.php';
 
             <tbody>
                 <?php
-                    // Get products and their category names
                     $sql = "SELECT products.*, categories.name AS category_name 
                             FROM products 
                             JOIN categories ON products.category_id = categories.id";
 
                     $result = mysqli_query($conn, $sql);
-
-                    // Loop through each product and display it
                     if(mysqli_num_rows($result) > 0){
                         while($row = mysqli_fetch_assoc($result)){
                             echo "<tr>";
                 ?>
-
-                <!-- Product Name -->
                 <td id="prodname-text"><?php echo $row["name"] ?></td>
-
-                <!-- Category -->
                 <td><span id="catcon"><?php echo $row["category_name"]; ?></span></td>
-
-                <!-- Price -->
                 <td id="price-text"><?php echo "₱".$row["price"]; ?></td>
-
-                <!-- Stock -->
                 <td class="stocktext-admin">
                     <?php echo $row["stock_quantity"] . " left"; ?>
                 </td>
-
-                <!-- Actions: Edit and Delete -->
                 <td>
                     <div class="action-buttons">
-
-                        <!-- Edit button (goes to edit page) -->
                         <a href="edit_product.php?id=<?= $row['id'] ?>">
                             <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M2.08333 16.6667H3.56771L13.75 6.48438L12.2656 5L2.08333 15.1823V16.6667ZM0 18.75V14.3229L13.75 0.598958C13.9583 0.407986 14.1885 0.260417 14.4406 0.15625C14.6927 0.0520834 14.9573 0 15.2344 0C15.5115 0 15.7806 0.0520834 16.0417 0.15625C16.3028 0.260417 16.5285 0.416667 16.7187 0.625L18.151 2.08333C18.3594 2.27431 18.5115 2.5 18.6073 2.76042C18.7031 3.02083 18.7507 3.28125 18.75 3.54167C18.75 3.81944 18.7024 4.08437 18.6073 4.33646C18.5122 4.58854 18.3601 4.8184 18.151 5.02604L4.42708 18.75H0ZM12.9948 5.75521L12.2656 5L13.75 6.48438L12.9948 5.75521Z" fill="#3779B2"/>
                             </svg>
                         </a>
-
-                        <!-- Delete button (asks confirmation before deleting) -->
                         <a href="../../backend/delete_product.php?id=<?= $row['id'] ?>" 
                            onclick="return confirm('Are you sure you want to remove this item?')">
                             <svg width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">

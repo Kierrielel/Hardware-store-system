@@ -1,19 +1,8 @@
 <?php
-// Start the session so we can access user login data
 session_start();
-
-// Include the admin header (UI layout like top bar, etc.)
 include '../../includes/header_admin.php';
-
-// Include database connection so we can run queries
 include '../../backend/db_connect.php';
 ?>
-
-<!-- 
-    POPUP FORM SECTION
-    This is a hidden popup that appears when the user clicks "Add Category".
-    It contains a form to add a new category (name + description).
--->
 <div class="PopupOverlay" id="addCategoryPopup">
     <div class="popupBox-categories">
         <div class="popheader">
@@ -23,19 +12,14 @@ include '../../backend/db_connect.php';
             <form action="../../backend/add_category.php" method="post">
                 <div class="form-group">
                     <label for="category_name">Category Name</label>
-                    <!-- User inputs category name -->
                     <input type="text" name="category_name" id="category_name" required>
                 </div>
                 <div class="form-group">
                     <label for="description">Description</label>
-                    <!-- Optional description -->
                     <textarea name="description" id="description" placeholder="Enter category description..."></textarea>
                 </div>
                 <div class="form-buttons">
-                    <!-- Cancel button hides the popup -->
-                    <button type="button" class="cancelbtn" onclick="document.querySelector('#addCategoryPopup').style.display='none'">Cancel</button>
-                    
-                    <!-- Submit button sends data to backend -->
+                    <button type="button" class="cancelbtn" onclick="document.querySelector('#addCategoryPopup').style.display='none'">Cancel</button
                     <button type="submit" class="savebtn">Add Category</button>
                 </div>
             </form>
@@ -44,12 +28,6 @@ include '../../backend/db_connect.php';
 </div>
 
 <div class="body-container">
-    
-    <!-- 
-        SIDEBAR NAVIGATION
-        This is the menu on the left side of the admin panel.
-        Each link goes to a different admin page.
-    -->
     <div class="sidebar-container">
         <nav>
             <div class="sidebar">
@@ -105,16 +83,7 @@ include '../../backend/db_connect.php';
         </nav>
     </div>
 
-    <!-- 
-        MAIN CONTENT AREA
-        This is where category data is displayed and managed
-    -->
     <div class="categories-content">
-
-        <!-- 
-            SUCCESS MESSAGE
-            Displays messages after actions like adding or deleting a category
-        -->
         <?php if (isset($_GET['success'])): ?>
             <div class="alert-success">
                 <?php
@@ -123,11 +92,6 @@ include '../../backend/db_connect.php';
                 ?>
             </div>
         <?php endif; ?>
-
-        <!-- 
-            ERROR MESSAGE
-            Displays errors like duplicate category or deletion issues
-        -->
         <?php if (isset($_GET['error'])): ?>
             <div class="alert-error">
                 <?php
@@ -136,38 +100,24 @@ include '../../backend/db_connect.php';
                 ?>
             </div>
         <?php endif; ?>
-
-        <!-- 
-            HEADER SECTION
-            Shows page title and "Add Category" button
-        -->
         <div class="header-text">
             <div class="text-container">
                 <h2>Categories</h2>
                 <p>View, edit, and add different categories</p>
             </div>
-
-            <!-- Button to open popup -->
             <a id="addbtn">
                 <div class="addbtn" onclick="document.querySelector('#addCategoryPopup').style.display='flex'">
-                    ...
+                    <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M440-120v-320H120v-80h320v-320h80v320h320v80H520v320h-80Z"/></svg>
                     <p>Add Category</p>
                 </div>
             </a>
         </div>
-
-        <!-- 
-            CATEGORY TABLE SECTION
-            Displays all categories from the database
-        -->
         <div class="product-table-container">
 
             <?php
-            // Check if there are any categories in the database
             $check = $conn->query("SELECT COUNT(*) as total FROM categories");
             $check_row = $check->fetch_assoc();
 
-            // If no categories exist, show empty message
             if($check_row['total'] == 0): ?>
                 <div class="empty-container">
                     <h3>There are currently no categories</h3>
@@ -175,7 +125,6 @@ include '../../backend/db_connect.php';
 
             <?php else: ?>
 
-                <!-- Table showing categories -->
                 <table class="product-table">
                     <thead>
                         <tr>
@@ -188,8 +137,6 @@ include '../../backend/db_connect.php';
                     <tbody>
 
                         <?php
-                        // SQL QUERY:
-                        // Get all categories and count how many products belong to each category
                         $sql = "SELECT categories.*, COUNT(products.id) as product_count 
                                 FROM categories 
                                 LEFT JOIN products ON categories.id = products.category_id 
@@ -197,20 +144,12 @@ include '../../backend/db_connect.php';
 
                         $result = $conn->query($sql);
 
-                        // Loop through each category
                         while($row = $result->fetch_assoc()):
                         ?>
                         <tr>
-                            <!-- Category name -->
                             <td id="prodname-text"><?php echo $row['name']; ?></td>
-
-                            <!-- Description (if empty, show dash) -->
                             <td id="price-text"><?php echo $row['description'] ?? '—'; ?></td>
-
-                            <!-- Number of products in this category -->
                             <td><?php echo $row['product_count']; ?> products</td>
-
-                            <!-- Delete button -->
                             <td>
                                 <div class="action-buttons">
                                     <a href="../../backend/delete_category.php?id=<?= $row['id'] ?>" 

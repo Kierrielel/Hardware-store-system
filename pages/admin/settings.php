@@ -1,19 +1,10 @@
 <?php
-// ================= SESSION + SETUP =================
-// Start the session so we can access logged-in user data (like username, email, etc.)
 session_start();
-
-// Include the admin header (UI layout like top bar)
 include '../../includes/header_admin.php';
-
-// Include database connection so we can interact with the database
 include '../../backend/db_connect.php';
 ?>
 
 <div class="body-container">
-
-        <!-- ================= SIDEBAR NAVIGATION ================= -->
-        <!-- This is the admin menu where users can navigate to different pages -->
         <div class="sidebar-container">
             <nav>
                 <div class="sidebar">
@@ -68,21 +59,13 @@ include '../../backend/db_connect.php';
                 </div>
             </nav>
         </div>
-
-        <!-- ================= SETTINGS PAGE CONTENT ================= -->
-        <!-- This section allows the admin to update account info and password -->
         <div class="settings-content">
-
-            <!-- Page header -->
             <div class="header-text">
                 <div class="text-container">
                     <h2>Settings</h2>
                     <p>Configure your store preferences and account details</p>
                 </div>
             </div>
-
-            <!-- ================= SUCCESS MESSAGE ================= -->
-            <!-- Shows a message if something was updated successfully -->
             <?php if (isset($_GET['success'])): ?>
                 <div class="alert-success">
                     <?php 
@@ -91,9 +74,6 @@ include '../../backend/db_connect.php';
                     ?>
                 </div>
             <?php endif; ?>
-            
-            <!-- ================= ERROR MESSAGE ================= -->
-            <!-- Shows error messages based on what went wrong -->
             <?php if (isset($_GET['error'])): ?>
                 <div class="alert-error">
                     <?php 
@@ -106,13 +86,8 @@ include '../../backend/db_connect.php';
                     ?>
                 </div>
             <?php endif; ?>
-            
-            <!-- ================= SETTINGS CARDS ================= -->
             <div class="setting-card-container">
                 <div class="align-container">
-
-                    <!-- ================= ACCOUNT INFORMATION FORM ================= -->
-                    <!-- This form allows the admin to update username, email, and phone -->
                     <div class="store-info-container">
                         <div class="card-header">
                             <svg width="22" height="22" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -123,14 +98,10 @@ include '../../backend/db_connect.php';
                         </div>
 
                         <div class="card-body">
-                            <!-- When submitted, data is sent to update_settings.php -->
                             <form action="../../backend/update_settings.php" method="POST" onsubmit="return confirm('Update your account information?');">
-
-                                <!-- Username and Email -->
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Username</label>
-                                        <!-- Value is pre-filled using session data -->
                                         <input type="text" name="username" value="<?= $_SESSION['user']['username'] ?>" required>
                                     </div>
                                     <div class="form-group">
@@ -138,8 +109,6 @@ include '../../backend/db_connect.php';
                                         <input type="email" name="email" value="<?= $_SESSION['user']['email'] ?>" required>
                                     </div>
                                 </div>
-
-                                <!-- Phone number and role -->
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Phone Number</label>
@@ -147,21 +116,15 @@ include '../../backend/db_connect.php';
                                     </div>
                                     <div class="form-group">
                                         <label>Role</label>
-                                        <!-- Disabled means user cannot edit this -->
                                         <input type="text" value="<?= $_SESSION['user']['role'] ?>" disabled>
                                     </div>
                                 </div>
-
-                                <!-- Submit button -->
                                 <div class="form-buttons">
                                     <button type="submit" name="update_account" class="savebtn">Save Changes</button>
                                 </div>
                             </form>
                         </div>
                     </div>
-
-                    <!-- ================= CHANGE PASSWORD FORM ================= -->
-                    <!-- This form allows the admin to change their password -->
                     <div class="account-setting-container">
                         <div class="card-header">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -173,8 +136,6 @@ include '../../backend/db_connect.php';
 
                         <div class="card-body">
                             <form action="../../backend/update_settings.php" method="POST" onsubmit="return confirm('Update your password?');">
-
-                                <!-- Current and new password -->
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Current Password</label>
@@ -185,16 +146,12 @@ include '../../backend/db_connect.php';
                                         <input type="password" name="new_password" placeholder="Enter new password" required>
                                     </div>
                                 </div>
-
-                                <!-- Confirm new password -->
                                 <div class="form-row">
                                     <div class="form-group">
                                         <label>Confirm New Password</label>
                                         <input type="password" name="confirm_password" placeholder="Confirm new password" required>
                                     </div>
                                 </div>
-
-                                <!-- Submit button -->
                                 <div class="form-buttons">
                                     <button type="submit" name="change_password" class="savebtn">Change Password</button>
                                 </div>
@@ -202,12 +159,7 @@ include '../../backend/db_connect.php';
                         </div>
                     </div>
                 </div>
-
-                <!-- ================= LOGOUT FORM ================= -->
-                <!-- This form logs the user out when submitted -->
                 <form action="/Hardware_Store_System/backend/process_login.php" method="post" onsubmit="return confirm('Are you sure you want to logout?');">
-                    
-                    <!-- Hidden input tells the backend this is a logout action -->
                     <input type="hidden" name="action" value="signout">
 
                     <button id="signbutton" type="submit">

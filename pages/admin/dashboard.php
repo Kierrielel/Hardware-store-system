@@ -1,20 +1,10 @@
 <?php
-// Start session to access logged-in user data
 session_start();
-
-// Include the admin header (top layout/design)
 include '../../includes/header_admin.php';
-
-// Connect to the database so we can fetch data
 include '../../backend/db_connect.php';
 ?>
 
 <div class="body-container">
-
-    <!-- 
-        SIDEBAR NAVIGATION
-        This is the left-side menu used to navigate between admin pages.
-    -->
     <div class="sidebar-container">
         <nav>
             <div class="sidebar">
@@ -69,14 +59,7 @@ include '../../backend/db_connect.php';
             </div>
         </nav>
     </div>
-
-    <!-- 
-        MAIN DASHBOARD CONTENT
-        This section displays important business statistics and tables
-    -->
     <div class="main-content">
-
-        <!-- Page header -->
         <div class="header-text">
             <div class="text-container">
                 <h2>Dashboard Overview</h2>
@@ -85,14 +68,7 @@ include '../../backend/db_connect.php';
         </div>
 
         <div class="concon">
-
-            <!-- 
-                TOP STATISTICS SECTION
-                These boxes display key summary data
-            -->
             <div class="con-top">
-
-                <!-- Total Revenue -->
                 <div class="con1">
                     <div class="box-total-rev">
                         <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -101,11 +77,8 @@ include '../../backend/db_connect.php';
                     </div>
                     <p>Total Revenue (Monthly)</p>
 
-                    <!-- Value comes from PHP variable -->
                     <div class="statValue"><?php echo $totalRevenue; ?></div>
                 </div>
-
-                <!-- Total Orders -->
                 <div class="con2">
                     <div class="box-total-order">
                         <svg width="32" height="32" viewBox="0 0 27 31" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -115,8 +88,6 @@ include '../../backend/db_connect.php';
                     <p>Total Orders</p>
                     <div class="statValue"><?php echo $totalOrders; ?></div>
                 </div>
-
-                <!-- Active Users -->
                 <div class="con3">
                     <div class="box-total-user">
                         <svg width="32" height="32" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -126,8 +97,6 @@ include '../../backend/db_connect.php';
                     <p>Active Users</p>
                     <div class="statValue"><?php echo $totalUsers; ?></div>
                 </div>
-
-                <!-- Average Order Value -->
                 <div class="con4">
                     <div class="box-ave-order">
                         <svg width="32" height="32" viewBox="0 0 33 33" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -138,20 +107,8 @@ include '../../backend/db_connect.php';
                     <p>Avg. Order Value</p>
                     <div class="statValue"><?php echo $AvgOV; ?></div>
                 </div>
-
             </div>
-
-            <!-- 
-                BOTTOM SECTION
-                Contains two tables:
-                1. Recent Orders
-                2. Low Stock Products
-            -->
             <div class="con-bottom">
-
-                <!-- ========================= -->
-                <!-- RECENT ORDERS TABLE -->
-                <!-- ========================= -->
                 <div class="conb1">
                     <div class="recentorder-text-container">
                         <p class="conb-text">Recent Orders</p>    
@@ -170,8 +127,6 @@ include '../../backend/db_connect.php';
                         <tbody>
 
                             <?php
-                            // SQL QUERY:
-                            // Get the 10 most recent orders that are still pending
                             $orders = $conn->query("
                                 SELECT orders.*, users.username 
                                 FROM orders 
@@ -180,34 +135,19 @@ include '../../backend/db_connect.php';
                                 ORDER BY order_date DESC 
                                 LIMIT 10
                             ");
-
-                            // Check if there are results
                             if($orders->num_rows > 0){
-
-                                // Loop through each order
                                 while($order = $orders->fetch_assoc()){
                             ?>
                                 <tr>
-                                    <!-- Order ID -->
                                     <td>#<?php echo $order['id']; ?></td>
-
-                                    <!-- Customer username -->
                                     <td><?php echo $order['username']; ?></td>
-
-                                    <!-- Format date nicely -->
                                     <td><?php echo date('M d, Y', strtotime($order['order_date'])); ?></td>
-
-                                    <!-- Status (always pending here) -->
                                     <td><span class="status-badge status-pending">Pending</span></td>
-
-                                    <!-- Format amount with peso sign -->
                                     <td>₱<?php echo number_format($order['total_amount'], 2); ?></td>
                                 </tr>
                             <?php
                                 }
-
                             } else {
-                                // If no orders found
                                 echo "<tr><td colspan='5' style='text-align:center; padding: 20px; color: #888;'>No pending orders</td></tr>";
                             }
                             ?>
@@ -215,10 +155,6 @@ include '../../backend/db_connect.php';
                         </tbody>
                     </table>
                 </div>
-
-                <!-- ========================= -->
-                <!-- LOW STOCK ALERT TABLE -->
-                <!-- ========================= -->
                 <div class="conb2">
                     <div class="lowstock-text-container">
                         <p class="conb-text">Low Stock Alert</p>    
@@ -235,8 +171,6 @@ include '../../backend/db_connect.php';
                         <tbody>
 
                             <?php
-                            // SQL QUERY:
-                            // Get all products with stock <= 20 (low stock warning)
                             $low_stock = $conn->query("
                                 SELECT products.*, categories.name AS category_name 
                                 FROM products 
@@ -245,29 +179,20 @@ include '../../backend/db_connect.php';
                                 ORDER BY products.stock_quantity ASC
                             ");
 
-                            // Check if there are low stock items
                             if($low_stock->num_rows > 0){
 
-                                // Loop through each product
                                 while($item = $low_stock->fetch_assoc()){
                             ?>
                                 <tr>
-                                    <!-- Product name -->
                                     <td id="prodname-text"><?php echo $item['name']; ?></td>
-
-                                    <!-- Category name -->
                                     <td><span id="catcon"><?php echo $item['category_name']; ?></span></td>
-
-                                    <!-- Stock (highlighted in red) -->
                                     <td style="color: #dc2626; font-weight: bold;">
                                         <?php echo $item['stock_quantity']; ?> left
                                     </td>
                                 </tr>
                             <?php
                                 }
-
                             } else {
-                                // If no low stock products
                                 echo "<tr><td colspan='3' style='text-align:center; padding: 20px; color: #888;'>No low stock items</td></tr>";
                             }
                             ?>

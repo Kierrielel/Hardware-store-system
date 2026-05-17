@@ -1,15 +1,9 @@
 <?php
-// Start the session so we can use session variables (like logged-in user info)
 session_start();
-
-// Include the admin header (UI layout) and database connection
 include '../../includes/header_admin.php';
 include '../../backend/db_connect.php';
 ?>
 <div class="body-container">
-
-        <!-- ================= SIDEBAR NAVIGATION ================= -->
-        <!-- This section displays the admin menu/sidebar with links to different pages -->
         <div class="sidebar-container">
         <nav>
             <div class="sidebar">
@@ -64,30 +58,19 @@ include '../../backend/db_connect.php';
             </div>
         </nav>
         </div>
-
-        <!-- ================= MAIN CONTENT: ORDERS PAGE ================= -->
-        <!-- This section displays the list of recent customer orders -->
         <div class="orders-content">
-
-            <!-- Page header/title -->
             <div class="header-text">
                 <div class="text-container">
                     <h2>Orders</h2>
                     <p>View and manage customer orders and their status</p>
                 </div>
             </div>
-
-            <!-- Container for the orders table -->
             <div class="order-container">
                 <div class="obottom-con">
                     <div class="box-bottom">
-
-                        <!-- Section title -->
                         <div class="box-bottom-header">
                             <h3>Recent Orders</h3>
                         </div>
-
-                        <!-- ================= ORDERS TABLE ================= -->
                         <table class="order-table">
                             <thead>
                                 <tr>
@@ -102,51 +85,29 @@ include '../../backend/db_connect.php';
 
                             <tbody>
                                 <?php
-                                // ================= FETCH ORDERS FROM DATABASE =================
-                                // This query gets the latest 10 orders along with the customer's username
                                 $orders = $conn->query("SELECT orders.*, users.username 
                                                         FROM orders 
                                                         JOIN users ON orders.user_id = users.id 
                                                         ORDER BY order_date DESC 
                                                         LIMIT 10");
-
-                                // Check if there are any orders in the database
                                 if($orders->num_rows > 0){
-
-                                    // Loop through each order and display it in a table row
                                     while($order = $orders->fetch_assoc()){
-
-                                        // ================= DETERMINE STATUS STYLE =================
-                                        // This assigns a CSS class based on the order status
                                         $status_class = '';
                                         if($order['order_status'] === 'completed') $status_class = 'status-completed';
                                         else if($order['order_status'] === 'pending') $status_class = 'status-pending';
                                         else if($order['order_status'] === 'cancelled') $status_class = 'status-cancelled';
                                         else if($order['order_status'] === 'processing') $status_class = 'status-processing';
                                         ?>
-                                        
-                                        <!-- ================= DISPLAY EACH ORDER ================= -->
                                         <tr>
-                                            <!-- Order ID -->
                                             <td>#<?php echo $order['id']; ?></td>
-
-                                            <!-- Customer username -->
                                             <td><?php echo $order['username']; ?></td>
-
-                                            <!-- Format and display order date -->
                                             <td><?php echo date('M d, Y', strtotime($order['order_date'])); ?></td>
-
-                                            <!-- Display order status with colored badge -->
                                             <td>
                                                 <span class="status-badge <?php echo $status_class; ?>">
                                                     <?php echo ucfirst($order['order_status']); ?>
                                                 </span>
                                             </td>
-
-                                            <!-- Display total amount with peso format -->
                                             <td>₱<?php echo number_format($order['total_amount'], 2); ?></td>
-
-                                            <!-- Link to view full order details -->
                                             <td>
                                                 <a href="order_details.php?id=<?= $order['id'] ?>" class="view-btn">View</a>
                                             </td>
@@ -155,8 +116,6 @@ include '../../backend/db_connect.php';
                                     }
 
                                 } else {
-                                    // ================= NO ORDERS CASE =================
-                                    // If there are no orders, display a message in the table
                                     echo "<tr><td colspan='5' style='text-align:center; padding: 20px; color: #888;'>No orders yet</td></tr>";
                                 }
                                 ?>

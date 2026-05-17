@@ -1,40 +1,15 @@
 <?php
-// Start the session so we can access user login data
 session_start();
-
-// Include the admin header (top layout/design)
 include '../../includes/header_admin.php';
-
-// Include database connection so we can run queries
 include '../../backend/db_connect.php';
 
-/*
-========================================
-CHECK IF ORDER ID EXISTS
-========================================
-This checks if the page was accessed with an order ID in the URL.
-Example: order_details.php?id=5
-If no ID is found, the user is redirected back to orders page.
-*/
 if (!isset($_GET['id'])) {
     header("Location: orders.php");
     exit;
 }
 
-// Convert the ID to an integer for safety
 $order_id = (int)$_GET['id'];
 
-/*
-========================================
-GET ORDER + CUSTOMER DETAILS
-========================================
-This query gets:
-- Order information (date, total, status)
-- Customer details (username, email, phone, address)
-
-We use JOIN to combine data from:
-orders table + users table
-*/
 $order_stmt = $conn->prepare("SELECT orders.*, users.username, users.email, users.phone_no,
                                users.province, users.city, users.barangay, users.unit
                                FROM orders 
@@ -44,29 +19,13 @@ $order_stmt->bind_param("i", $order_id);
 $order_stmt->execute();
 $order_result = $order_stmt->get_result();
 
-// Fetch the result as an associative array
 $order = $order_result->fetch_assoc();
 
-/*
-If no order is found (invalid ID), redirect back
-*/
 if (!$order) {
     header("Location: orders.php");
     exit;
 }
 
-/*
-========================================
-GET ORDER ITEMS
-========================================
-This query gets all products included in the order.
-
-It joins:
-- order_items (contains quantity & price)
-- products (contains product name and image)
-
-So we can display full product details in the table.
-*/
 $items_stmt = $conn->prepare("SELECT order_items.*, products.name, products.image_path
                                FROM order_items 
                                JOIN products ON order_items.product_id = products.id 
@@ -78,7 +37,6 @@ $items_result = $items_stmt->get_result();
 
 <div class="body-container">
 
-    <!-- Sidebar navigation (just UI, no logic) -->
     <div class="sidebar-container">
         <nav>
             <div class="sidebar">
@@ -136,36 +94,20 @@ $items_result = $items_stmt->get_result();
 
     <div class="order-details-content">
 
-        <!-- Show success message if status was updated -->
         <?php if(isset($_GET['success'])): ?>
             <div class="alert-success">Status updated successfully!</div>
         <?php endif; ?>
 
-        <!-- Page Header -->
         <div class="header-text">
             <div class="text-container">
-
-                <!-- Display Order ID -->
                 <h2>Order #<?php echo $order['id']; ?></h2>
-
-                <!-- Display formatted order date -->
                 <p><?php echo date('M d, Y', strtotime($order['order_date'])); ?></p>
             </div>
-
-            <!-- Back button -->
             <a href="orders.php" class="back-btn">Back to Orders</a>
         </div>
 
         <div class="order-details-container">
-
-            <!-- ========================
-                 LEFT SIDE (ITEMS + CUSTOMER INFO)
-            ======================== -->
             <div class="order-details-left">
-
-                <!-- ========================
-                     ORDERED ITEMS TABLE
-                ======================== -->
                 <div class="detail-card">
                     <h3>Ordered Items</h3>
 
@@ -178,32 +120,19 @@ $items_result = $items_stmt->get_result();
                                 <th>SUBTOTAL</th>
                             </tr>
                         </thead>
-
                         <tbody>
-
-                            <!-- Loop through each product in the order -->
                             <?php while($item = $items_result->fetch_assoc()): ?>
                             <tr>
                                 <td>
                                     <div style="display:flex; align-items:center; gap:10px;">
-
-                                        <!-- Product image -->
                                         <img src="/Hardware_Store_System/<?= $item['image_path'] ?>" 
                                              height="40" width="40" 
                                              style="object-fit:contain; border-radius:5px;">
-
-                                        <!-- Product name -->
                                         <span><?= $item['name'] ?></span>
                                     </div>
                                 </td>
-
-                                <!-- Product price -->
                                 <td>₱<?= number_format($item['price'], 2) ?></td>
-
-                                <!-- Quantity ordered -->
                                 <td><?= $item['quantity'] ?></td>
-
-                                <!-- Subtotal = price × quantity -->
                                 <td>₱<?= number_format($item['price'] * $item['quantity'], 2) ?></td>
                             </tr>
                             <?php endwhile; ?>
@@ -211,10 +140,6 @@ $items_result = $items_stmt->get_result();
                         </tbody>
                     </table>
                 </div>
-
-                <!-- ========================
-                     CUSTOMER INFORMATION
-                ======================== -->
                 <div class="detail-card">
                     <h3>Customer Information</h3>
 
@@ -231,67 +156,38 @@ $items_result = $items_stmt->get_result();
                     <div class="detail-row">
                         <p class="detail-label">Phone</p>
                         <p><?= $order['phone_no'] ?></p>
-                    </div>
-
-                    <!-- Full address combined -->
+                    </div
                     <div class="detail-row">
                         <p class="detail-label">Address</p>
                         <p><?= $order['unit'] ?>, <?= $order['barangay'] ?>, <?= $order['city'] ?>, <?= $order['province'] ?></p>
                     </div>
                 </div>
             </div>
-
-            <!-- ========================
-                 RIGHT SIDE (SUMMARY + UPDATE)
-            ======================== -->
             <div class="order-details-right">
-
-                <!-- ORDER SUMMARY -->
                 <div class="detail-card">
                     <h3>Order Summary</h3>
-
                     <div class="detail-row">
                         <p class="detail-label">Total Amount</p>
-
-                        <!-- Format total amount -->
                         <p><strong>₱<?= number_format($order['total_amount'], 2) ?></strong></p>
                     </div>
-
                     <div class="detail-row">
                         <p class="detail-label">Payment Method</p>
                         <p>Cash on Delivery</p>
                     </div>
-
-                    <!-- Current order status -->
                     <div class="detail-row">
                         <p class="detail-label">Current Status</p>
-
-                        <!-- Dynamic class based on status -->
                         <span class="status-badge status-<?= $order['order_status'] ?>">
                             <?= ucfirst($order['order_status']) ?>
                         </span>
                     </div>
                 </div>
-
-                <!-- ========================
-                     UPDATE ORDER STATUS
-                ======================== -->
                 <div class="detail-card">
                     <h3>Update Status</h3>
-
-                    <!-- Form to update order status -->
                     <form action="../../backend/update_order.php" method="POST">
-
-                        <!-- Hidden order ID -->
                         <input type="hidden" name="order_id" value="<?= $order['id'] ?>">
-
-                        <!-- Used for redirect after update -->
                         <input type="hidden" name="redirect" value="order_details">
-
                         <div class="form-group">
                             <label>Order Status</label>
-
-                            <!-- Dropdown with current status selected -->
                             <select name="order_status">
                                 <option value="pending" <?= $order['order_status'] === 'pending' ? 'selected' : '' ?>>Pending</option>
                                 <option value="processing" <?= $order['order_status'] === 'processing' ? 'selected' : '' ?>>Processing</option>
@@ -299,8 +195,6 @@ $items_result = $items_stmt->get_result();
                                 <option value="cancelled" <?= $order['order_status'] === 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                             </select>
                         </div>
-
-                        <!-- Submit button -->
                         <button type="submit" class="savebtn">Update Status</button>
                     </form>
                 </div>

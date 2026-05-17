@@ -1,56 +1,26 @@
 <?php
-// ============================================
-// START SESSION & INCLUDE REQUIRED FILES
-// ============================================
-
-// Start session to access user/admin data
 session_start();
-
-// Include the admin header (top layout of the page)
 include '../../includes/header_admin.php';
-
-// Connect to the database so we can fetch product data
 include '../../backend/db_connect.php';
 
-
-// ============================================
-// VALIDATE PRODUCT ID FROM URL
-// ============================================
-
-// Check if a product ID is passed in the URL (e.g., edit_product.php?id=5)
 if (!isset($_GET['id'])) {
-    // If no ID is found, redirect back to inventory page
     header("Location: inventory.php");
     exit;
 }
 
-// Store the product ID from the URL
 $id = $_GET['id'];
 
-// Fetch product details from the database using the ID
 $product = $conn->query("SELECT * FROM products WHERE id = $id")->fetch_assoc();
 
-// If no product is found with that ID, go back to inventory
 if (!$product) {
     header("Location: inventory.php");
     exit;
 }
 
-
-// ============================================
-// FETCH ALL CATEGORIES FOR DROPDOWN
-// ============================================
-
-// Get all categories from the database
-// This will be used in the dropdown selection
 $categories = $conn->query("SELECT * FROM categories");
 ?>
 
 <div class="body-container">
-
-    <!-- ============================================
-         SIDEBAR NAVIGATION (ADMIN MENU)
-    ============================================ -->
     <div class="sidebar-container">
         <nav>
             <div class="sidebar">
@@ -108,74 +78,42 @@ $categories = $conn->query("SELECT * FROM categories");
 
     <div class="inventory-content">
 
-        <!-- ============================================
-             SUCCESS / ERROR MESSAGES
-        ============================================ -->
-
-        <!-- Show success message if update worked -->
         <?php if (isset($_GET['success'])): ?>
             <div class="alert-success">Product updated successfully!</div>
         <?php endif; ?>
-
-        <!-- Show error message if update failed -->
         <?php if (isset($_GET['error'])): ?>
             <div class="alert-error">Failed to update product.</div>
         <?php endif; ?>
 
-
-        <!-- ============================================
-             PAGE HEADER
-        ============================================ -->
         <div class="header-text">
             <div class="text-container">
                 <h2>Edit Product</h2>
                 <p>Update product details</p>
             </div>
         </div>
-
-
-        <!-- ============================================
-             EDIT PRODUCT FORM
-        ============================================ -->
         <div class="edit-form-container">
-
-            <!-- 
-                Form sends data to update_product.php
-                enctype="multipart/form-data" is required for file uploads (images)
-            -->
             <form action="../../backend/update_product.php" method="post" enctype="multipart/form-data">
-
-                <!-- Hidden field to send product ID -->
                 <input type="hidden" name="product_id" value="<?php echo $product['id']; ?>">
-                
-                <!-- Product Name -->
+
                 <div class="form-group">
                     <label for="product_name">Product Name</label>
                     <input type="text" name="product_name" id="product_name" 
                         value="<?php echo $product['name']; ?>" required>
                 </div>
-
-                <!-- Brand + Category Row -->
                 <div class="form-row">
-
-                    <!-- Brand input -->
                     <div class="form-group">
                         <label for="brand">Brand</label>
                         <input type="text" name="brand" id="brand" 
                             value="<?php echo $product['brand']; ?>" 
                             placeholder="e.g. Boysen">
                     </div>
-
-                    <!-- Category dropdown -->
                     <div class="form-group">
                         <label for="category">Category</label>
 
-                        <!-- Dropdown populated from database -->
                         <select name="category_id" id="category" required>
                             <option value="">Select Category</option>
                             
                             <?php 
-                            // Loop through all categories
                             while($cat = $categories->fetch_assoc()): 
                             ?>
                                 <option value="<?php echo $cat['id']; ?>"
@@ -190,31 +128,18 @@ $categories = $conn->query("SELECT * FROM categories");
                         </select>
                     </div>
                 </div>
-
-                <!-- Price + Stock Row -->
                 <div class="form-row">
-
-                    <!-- Price input -->
                     <div class="form-group">
                         <label for="price">Price (₱)</label>
                         <input type="number" step="0.01" min="0" name="price" id="price" 
                             value="<?php echo $product['price']; ?>" required>
                     </div>
-
-                    <!-- Stock input -->
                     <div class="form-group">
                         <label for="stock">Stock</label>
                         <input type="number" min="0" name="stock" id="stock" 
                             value="<?php echo $product['stock_quantity']; ?>" required>
                     </div>
                 </div>
-
-
-                <!-- ============================================
-                     IMAGE DISPLAY & UPLOAD
-                ============================================ -->
-
-                <!-- Show current product image -->
                 <div class="form-group">
                     <label>Current Image</label>
 
@@ -222,32 +147,16 @@ $categories = $conn->query("SELECT * FROM categories");
                         alt="Current product image" height="80" width="80"
                         style="border-radius:8px; border:1px solid #ddd; padding:4px;">
                 </div>
-
-                <!-- Option to upload a new image -->
                 <div class="form-group">
                     <label for="image">Change Image (optional)</label>
                     <input type="file" name="image" id="image" accept="image/*">
                 </div>
-
-
-                <!-- Product description -->
                 <div class="form-group">
                     <label for="description">Description</label>
-
-                    <!-- Pre-filled with existing description -->
                     <textarea name="description" id="description"><?php echo $product['description']; ?></textarea>
                 </div>
-
-
-                <!-- ============================================
-                     FORM BUTTONS
-                ============================================ -->
                 <div class="form-buttons">
-
-                    <!-- Cancel button (go back) -->
                     <a href="inventory.php" class="cancelbtn">Cancel</a>
-
-                    <!-- Submit button -->
                     <button type="submit" class="savebtn">Save Changes</button>
                 </div>
 

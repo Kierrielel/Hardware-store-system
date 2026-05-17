@@ -1,23 +1,10 @@
 <?php
-// ============================================
-// START SESSION & INCLUDE REQUIRED FILES
-// ============================================
-
-// Start session to keep track of logged-in admin
 session_start();
-
-// Include the admin header (top layout/design)
 include '../../includes/header_admin.php';
-
-// Connect to the database
 include '../../backend/db_connect.php';
 ?>
 
 <div class="body-container">
-
-    <!-- ============================================
-         SIDEBAR NAVIGATION (ADMIN MENU)
-    ============================================ -->
     <div class="sidebar-container">
         <nav>
             <div class="sidebar">
@@ -72,13 +59,7 @@ include '../../backend/db_connect.php';
             </div>
         </nav>
     </div>
-
-    <!-- ============================================
-         FINANCE REPORT MAIN CONTENT
-    ============================================ -->
     <div class="finance-content">
-
-        <!-- Page header -->
         <div class="header-text">
             <div class="text-container">
                 <h2>Finance Report</h2>
@@ -87,22 +68,12 @@ include '../../backend/db_connect.php';
         </div>
 
         <div class="finance-container">
-
-            <!-- ============================================
-                 TOP SUMMARY BOXES (REVENUE + BEST PRODUCT)
-            ============================================ -->
             <div class="fcon-top">
-
-                <!-- ========================= -->
-                <!-- DAILY REVENUE -->
-                <!-- ========================= -->
                 <div class="box">
                     <div class="box-inner">
                         <p class="box-label">Today's Revenue</p>
                         <h2 class="box-value">₱<?php
 
-                            // SQL QUERY:
-                            // Get total revenue for today (only completed orders)
                             $daily = $conn->query("
                                 SELECT SUM(total_amount) as total 
                                 FROM orders 
@@ -110,26 +81,18 @@ include '../../backend/db_connect.php';
                                 AND order_status = 'completed'
                             ");
 
-                            // Fetch result
                             $daily_row = $daily->fetch_assoc();
 
-                            // Display result (if null, show 0)
                             echo number_format($daily_row['total'] ?? 0, 2);
                         ?></h2>
                         <p class="box-sub">Daily Report</p>
                     </div>
                 </div>
-
-                <!-- ========================= -->
-                <!-- WEEKLY REVENUE -->
-                <!-- ========================= -->
                 <div class="box">
                     <div class="box-inner">
                         <p class="box-label">This Week's Revenue</p>
                         <h2 class="box-value">₱<?php
 
-                            // SQL QUERY:
-                            // Get total revenue for the current week
                             $weekly = $conn->query("
                                 SELECT SUM(total_amount) as total 
                                 FROM orders 
@@ -144,17 +107,10 @@ include '../../backend/db_connect.php';
                         <p class="box-sub">Weekly Report</p>
                     </div>
                 </div>
-
-                <!-- ========================= -->
-                <!-- MONTHLY REVENUE -->
-                <!-- ========================= -->
                 <div class="box">
                     <div class="box-inner">
                         <p class="box-label">This Month's Revenue</p>
                         <h2 class="box-value">₱<?php
-
-                            // SQL QUERY:
-                            // Get total revenue for the current month
                             $monthly = $conn->query("
                                 SELECT SUM(total_amount) as total 
                                 FROM orders 
@@ -170,17 +126,10 @@ include '../../backend/db_connect.php';
                         <p class="box-sub">Monthly Report</p>
                     </div>
                 </div>
-
-                <!-- ========================= -->
-                <!-- BEST SELLING PRODUCT -->
-                <!-- ========================= -->
                 <div class="box">
                     <div class="box-inner">
                         <p class="box-label">Best Selling Product</p>
                         <h2 class="box-value-sm"><?php
-
-                            // SQL QUERY:
-                            // Find the product with the highest total quantity sold
                             $best = $conn->query("
                                 SELECT products.name, SUM(order_items.quantity) as total_sold 
                                 FROM order_items 
@@ -189,8 +138,6 @@ include '../../backend/db_connect.php';
                                 ORDER BY total_sold DESC 
                                 LIMIT 1
                             ");
-
-                            // Check if there is data
                             if($best->num_rows > 0){
                                 $best_row = $best->fetch_assoc();
                                 echo $best_row['name'];
@@ -201,16 +148,9 @@ include '../../backend/db_connect.php';
                         <p class="box-sub">Most ordered item</p>
                     </div>
                 </div>
-
             </div>
-
-            <!-- ============================================
-                 BOTTOM TABLE: REVENUE BY CATEGORY
-            ============================================ -->
             <div class="fcon-bottom">
                 <div class="box-bottom">
-
-                    <!-- Table header -->
                     <div class="box-bottom-header">
                         <h3>Revenue by Category</h3>
                     </div>
@@ -226,8 +166,6 @@ include '../../backend/db_connect.php';
                         <tbody>
 
                             <?php
-                            // SQL QUERY:
-                            // Calculate total items sold and revenue per category
                             $cat_revenue = $conn->query("
                                 SELECT 
                                 categories.name AS category_name,
@@ -241,28 +179,18 @@ include '../../backend/db_connect.php';
                                 GROUP BY categories.id
                                 ORDER BY total_revenue DESC
                             ");
-
-                            // Check if results exist
                             if($cat_revenue->num_rows > 0){
-
-                                // Loop through each category
                                 while($cat = $cat_revenue->fetch_assoc()){
                             ?>
                                 <tr>
-                                    <!-- Category name -->
                                     <td><span class="category-badge"><?php echo $cat['category_name']; ?></span></td>
-
-                                    <!-- Total items sold -->
                                     <td><?php echo $cat['total_sold']; ?> items</td>
-
-                                    <!-- Total revenue -->
                                     <td>₱<?php echo number_format($cat['total_revenue'], 2); ?></td>
                                 </tr>
                             <?php
                                 }
 
                             } else {
-                                // If no sales data found
                                 echo "<tr><td colspan='3' style='text-align:center; padding: 20px; color: #888;'>No sales data yet</td></tr>";
                             }
                             ?>
